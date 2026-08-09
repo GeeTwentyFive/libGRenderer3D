@@ -1,0 +1,18 @@
+[submodule "libs/linalg"]
+	path = libs/linalg
+	url = https://github.com/sgorsten/linalg.git
+[submodule "_EXAMPLE/libs/linalg"]
+	path = _EXAMPLE/libs/linalg
+	url = https://github.com/sgorsten/linalg.git
+[submodule "_EXAMPLE/libs/stb"]
+	path = _EXAMPLE/libs/stb
+	url = https://github.com/nothings/stb.git
+[submodule "_EXAMPLE/libs/GFramePacer"]
+	path = _EXAMPLE/libs/GFramePacer
+	url = https://github.com/GeeTwentyFive/GFramePacer.git
+[submodule "_EXAMPLE/libs/GOBJ"]
+	path = _EXAMPLE/libs/GOBJ
+	url = https://github.com/GeeTwentyFive/GOBJ.git
+[submodule "_EXAMPLE/libs/libGWindower"]
+	path = _EXAMPLE/libs/libGWindower
+	url = https://github.com/GeeTwentyFive/libGWindower.git
