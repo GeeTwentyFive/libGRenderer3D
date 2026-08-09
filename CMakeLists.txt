@@ -11,10 +11,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/i
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/libs")
 
-add_library(glad
+add_library(GRENDERER3D_glad
         "libs/glad/glad.c"
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE glad)
+target_link_libraries(${PROJECT_NAME} PRIVATE GRENDERER3D_glad)
 
 if (GRENDERER3D_BUILD_EXAMPLE)
         add_subdirectory(_EXAMPLE)

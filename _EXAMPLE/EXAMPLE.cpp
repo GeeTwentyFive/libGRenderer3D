@@ -12,6 +12,9 @@ using namespace linalg::aliases;
 #include <stdexcept>
 #include <string>
 #include <math.h>
+#ifndef M_PI  // (Windows fix)
+#define M_PI 3.14159265358979323846
+#endif
 #include <iostream>
 
 

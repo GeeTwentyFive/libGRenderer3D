@@ -18,14 +18,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/
 set(GWINDOWER_BUILD_EXAMPLE OFF CACHE BOOL "" FORCE)
 add_subdirectory("libs/libGWindower")
 
-add_library(_glad
+add_library(GRENDERER3D_EXAMPLE_glad
         "libs/glad/glad.c"
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         GRenderer3D
         GWindower
-        _glad
+        GRENDERER3D_EXAMPLE_glad
 )
 
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Cube.obj" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/Release")

@@ -9,6 +9,10 @@ using namespace linalg::aliases;
 #include <vector>
 #include <unordered_map>
 #include <string.h>
+#include <math.h>
+#ifndef M_PI  // (Windows fix)
+#define M_PI 3.14159265358979323846
+#endif
 
 
 static const size_t SSBO_VERTEX_INSTANCE_INPUT_CAPACITY = 256 * 1024 * 1024;
