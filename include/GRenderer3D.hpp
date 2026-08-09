@@ -30,5 +30,5 @@ class GRenderer3D { public: ~GRenderer3D(); struct MeshInstance; private: struct
         };
         MeshInstance* AddMesh(const uint64_t mesh_id) noexcept { auto mesh_instance = std::make_unique<MeshInstance>(); mesh_instance->_renderer_instance = this; mesh_instance->mesh_id = mesh_id; MeshInstance* ptr = mesh_instance.get(); mesh_instances[mesh_id].push_back(std::move(mesh_instance)); return ptr; }
 
-        int DrawFrame() noexcept;  // returns non-0 on error
+        int DrawFrame(int framebuffer_width, int framebuffer_height) noexcept;  // returns non-0 on error
 };

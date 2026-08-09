@@ -70,7 +70,7 @@ int main() { try {
                 gr3d.camera_pos[0] += -move_dir.x * CAMERA_MOVE_SPEED * delta_time;
                 gr3d.camera_pos[2] += -move_dir.y * CAMERA_MOVE_SPEED * delta_time;
 
-                gr3d.DrawFrame();
+                gr3d.DrawFrame(gw.window_width, gw.window_height);
         }
 
         return 0;

@@ -150,12 +150,7 @@ void GRenderer3D::MeshInstance::RotateZEuler(float degrees) noexcept { float4 ne
         ); this->rotation[0] = new_rot.x; this->rotation[1] = new_rot.y; this->rotation[2] = new_rot.z; this->rotation[3] = new_rot.w;
 }
 
-int GRenderer3D::DrawFrame() noexcept { GLboolean _prev_depth_enabled = glIsEnabled(GL_DEPTH_TEST); glEnable(GL_DEPTH_TEST);
-        GLint _glviewport[4]; glGetIntegerv(GL_VIEWPORT, _glviewport);
-        int viewport_width = _glviewport[2] - _glviewport[0];
-        int viewport_height = _glviewport[3] - _glviewport[1];
-
-
+int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexcept { GLboolean _prev_depth_enabled = glIsEnabled(GL_DEPTH_TEST); glEnable(GL_DEPTH_TEST);
         glUseProgram(this->_->shader_id);
 
         // Set view and projection matrices (Camera)
@@ -176,7 +171,7 @@ int GRenderer3D::DrawFrame() noexcept { GLboolean _prev_depth_enabled = glIsEnab
                 ),
                 float3{0, 1, 0}
         );
-        float4x4 proj = linalg::perspective_matrix(camera_fov, ((float)viewport_width)/((float)viewport_height), camera_near, camera_far, linalg::fwd_axis::neg_z, linalg::z_range::zero_to_one);
+        float4x4 proj = linalg::perspective_matrix(camera_fov, ((float)framebuffer_width)/((float)framebuffer_height), camera_near, camera_far, linalg::fwd_axis::neg_z, linalg::z_range::zero_to_one);
         float4x4 viewProjection = linalg::mul(proj, view);  // NOTE: Flip multiplication order in not-OpenGL
         glUniformMatrix4fv(
                 this->_->shader_viewProjection_location, 1, GL_FALSE,

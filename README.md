@@ -8,7 +8,7 @@ Quake/UT/GoldSrc-style renderer but with angle-darkening instead of lighting to 
 1) Create native window with OpenGL context (e.g. with [GWindower](https://github.com/GeeTwentyFive/libGWindower) or GLFW)
 2) `GRenderer gr3d;`
 3) ...create meshes, instantiate created meshes...
-4) `gr3d.DrawFrame();` (+ do a `glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)` each frame (lib doesn't do that so that you can compose it with other rendering))
+4) `gr3d.DrawFrame(FRAMEBUFFER_WIDTH, FRAMEBUFFER_HEIGHT);` (+ do a `glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)` each frame (lib doesn't do that so that you can compose it with other rendering))
 
 
 # API
