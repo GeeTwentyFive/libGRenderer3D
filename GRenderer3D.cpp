@@ -150,7 +150,7 @@ void GRenderer3D::MeshInstance::RotateZEuler(float degrees) noexcept { float4 ne
         ); this->rotation[0] = new_rot.x; this->rotation[1] = new_rot.y; this->rotation[2] = new_rot.z; this->rotation[3] = new_rot.w;
 }
 
-int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexcept { GLboolean _prev_depth_enabled = glIsEnabled(GL_DEPTH_TEST); glEnable(GL_DEPTH_TEST);
+int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexcept { glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE); glEnable(GL_DEPTH_TEST);
         glUseProgram(this->_->shader_id);
 
         // Set view and projection matrices (Camera)
@@ -220,8 +220,6 @@ int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexce
                 glDrawElementsInstanced(GL_TRIANGLES, this->_->meshes[mesh_id].indices_count, GL_UNSIGNED_INT, 0, _mesh_instances.size());
         }
 
-
-        if (!_prev_depth_enabled) glDisable(GL_DEPTH_TEST);
 
         return 0;
 }
