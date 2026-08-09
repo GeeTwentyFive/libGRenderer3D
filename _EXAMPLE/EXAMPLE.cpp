@@ -28,10 +28,11 @@ const int CAMERA_MOVE_SPEED = 8;
 
 
 int main() { try {
-        GWindower gw{0, 0, 4, 6}; if (!gladLoadGL()) ERROR("Failed to load OpenGL");
-        glViewport(0, 0, GWindower::GetScreenWidth(), GWindower::GetScreenHeight()); glClearColor(0.0, 0.0, 0.0, 1.0);
+        GWindower gw{0, 0, 4, 6};
 
-        GRenderer3D gr3d{(uint32_t)GWindower::GetScreenWidth(), (uint32_t)GWindower::GetScreenHeight()};
+        if (!gladLoadGL()) ERROR("Failed to load OpenGL");
+
+        GRenderer3D gr3d;
 
         GOBJ cube_mesh_data("Cube.obj");
         int texture_width, texture_height, _texture_comp;
@@ -49,10 +50,12 @@ int main() { try {
         GRenderer3D::MeshInstance* cube_mesh_instance_2 = gr3d.AddMesh(cube_mesh_id);
         cube_mesh_instance_2->RotateZEuler(10.0f);
 
+        glClearColor(0.0, 0.0, 0.0, 1.0);
         GFramePacer gfp; gfp.target_frametime_ms = TARGET_FRAMETIME_MS;
         while (gw.Update()) { if(gw.key_states[GWindower::KEY_ESCAPE]) break;
                 double delta_time = gfp.Wait();
 
+                glViewport(0, 0, gw.window_width, gw.window_height);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 gr3d.camera_yaw += gw.mouse_x * CAMERA_SENSITIVITY;

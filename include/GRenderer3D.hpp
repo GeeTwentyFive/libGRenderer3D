@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 class GRenderer3D { public: ~GRenderer3D(); struct MeshInstance; private: struct _impl; std::unique_ptr<_impl> _; std::unordered_map<uint64_t, std::vector<std::unique_ptr<GRenderer3D::MeshInstance>>> mesh_instances; public:
-        explicit GRenderer3D(uint32_t window_width, uint32_t window_height);
+        explicit GRenderer3D();
 
         float camera_pos[3] = {0, 0, 0};
         uint16_t camera_yaw = 0;  // 0..65535 = 0..2PI

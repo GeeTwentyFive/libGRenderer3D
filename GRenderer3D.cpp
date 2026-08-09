@@ -64,8 +64,6 @@ struct Mesh {
 };
 
 struct GRenderer3D::_impl { uint64_t _last_uid = 0; uint64_t NewUID() { return _last_uid++; }
-        uint32_t window_width, window_height;
-
         GLuint shader_id;
         GLint shader_cameraPos_location; GLint shader_viewProjection_location;
         std::unordered_map<uint64_t, Mesh> meshes;
@@ -74,9 +72,7 @@ struct GRenderer3D::_impl { uint64_t _last_uid = 0; uint64_t NewUID() { return _
         GLuint ssbo_fragment_instance_input_id; std::vector<float4> instance_colors;
 };
 
-GRenderer3D::GRenderer3D(uint32_t window_width, uint32_t window_height) { this->_ = std::make_unique<GRenderer3D::_impl>(); GLint status;
-        this->_->window_width = window_width; this->_->window_height = window_height;
-
+GRenderer3D::GRenderer3D() { this->_ = std::make_unique<GRenderer3D::_impl>(); GLint status;
         if (!gladLoadGL()) ERROR("Failed to load OpenGL functions");
 
         this->_->shader_id = glCreateProgram(); if (!this->_->shader_id) ERROR("Failed to create shader program");
@@ -155,6 +151,11 @@ void GRenderer3D::MeshInstance::RotateZEuler(float degrees) noexcept { float4 ne
 }
 
 int GRenderer3D::DrawFrame() noexcept { GLboolean _prev_depth_enabled = glIsEnabled(GL_DEPTH_TEST); glEnable(GL_DEPTH_TEST);
+        GLint _glviewport[4]; glGetIntegerv(GL_VIEWPORT, _glviewport);
+        int viewport_width = _glviewport[2] - _glviewport[0];
+        int viewport_height = _glviewport[3] - _glviewport[1];
+
+
         glUseProgram(this->_->shader_id);
 
         // Set view and projection matrices (Camera)
@@ -175,7 +176,7 @@ int GRenderer3D::DrawFrame() noexcept { GLboolean _prev_depth_enabled = glIsEnab
                 ),
                 float3{0, 1, 0}
         );
-        float4x4 proj = linalg::perspective_matrix(camera_fov, ((float)this->_->window_width)/((float)this->_->window_height), camera_near, camera_far, linalg::fwd_axis::neg_z, linalg::z_range::zero_to_one);
+        float4x4 proj = linalg::perspective_matrix(camera_fov, ((float)viewport_width)/((float)viewport_height), camera_near, camera_far, linalg::fwd_axis::neg_z, linalg::z_range::zero_to_one);
         float4x4 viewProjection = linalg::mul(proj, view);  // NOTE: Flip multiplication order in not-OpenGL
         glUniformMatrix4fv(
                 this->_->shader_viewProjection_location, 1, GL_FALSE,
