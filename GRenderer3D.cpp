@@ -155,7 +155,7 @@ void GRenderer3D::MeshInstance::RotateZEuler(float degrees) noexcept { float4 ne
 }
 
 int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexcept { glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE); glEnable(GL_DEPTH_TEST);
-        glUseProgram(this->_->shader_id);
+        glUseProgram(this->_->shader_id); glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, this->_->ssbo_vertex_instance_input_id); glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, this->_->ssbo_fragment_instance_input_id);
 
         // Set view and projection matrices (Camera)
         float3 _camera_pos = {camera_pos[0], camera_pos[1], camera_pos[2]};
