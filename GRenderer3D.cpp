@@ -15,13 +15,16 @@ using namespace linalg::aliases;
 #endif
 
 
+namespace {
 static const size_t SSBO_VERTEX_INSTANCE_INPUT_CAPACITY = 256 * 1024 * 1024;
 static const size_t SSBO_FRAGMENT_INSTANCE_INPUT_CAPACITY = 64 * 1024 * 1024;
+}
 
 
 #define ERROR(msg) throw std::runtime_error(std::string("[ERROR] ") + __FILE__ + "@" + std::to_string(__LINE__) + " (" + __func__ + "): " + (msg))
 
 
+namespace {
 const GLchar* VERTEX_SHADER = {"#version 460 core\n"
         "layout (location = 0) in vec3 pos;"
         "layout (location = 1) in vec3 normal;"
@@ -57,6 +60,7 @@ const GLchar* FRAGMENT_SHADER = {"#version 460 core\n"
                 "FragColor = (texture(texture0, frag_uv) * instanceColors[frag_InstanceID]) * max(dot(frag_normal, normalize(cameraPos - frag_worldPos.xyz)), 0.1);"
         "}"
 ""};
+}
 
 struct Mesh {
         GLuint vao; GLsizei indices_count;
