@@ -23,9 +23,8 @@ class GRenderer3D { public: ~GRenderer3D(); struct MeshInstance; private: struct
         struct MeshInstance { void* user_data = nullptr; uint64_t mesh_id; GRenderer3D* _renderer_instance = nullptr;
                 float position[3] = {0, 0, 0};
                 float rotation[4] = {0, 0, 0, 1};  // Quaternion
-                void RotateXEuler(float degrees) noexcept; void RotateYEuler(float degrees) noexcept; void RotateZEuler(float degrees) noexcept;
                 float scale[3] = {1, 1, 1};
-                uint32_t color_RGBA = 0xFFFFFFFF;  // Multiplied with sampled texture color
+                uint32_t color = 0xFFFFFFFF;  // Multiplied with sampled texture color
                 void Remove() { for (auto it = this->_renderer_instance->mesh_instances[mesh_id].begin(); it != this->_renderer_instance->mesh_instances[mesh_id].end(); it++) { if (it->get() == this) {this->_renderer_instance->mesh_instances[mesh_id].erase(it); return;} }; }
         };
         MeshInstance* AddMesh(const uint64_t mesh_id) noexcept { auto mesh_instance = std::make_unique<MeshInstance>(); mesh_instance->_renderer_instance = this; mesh_instance->mesh_id = mesh_id; MeshInstance* ptr = mesh_instance.get(); mesh_instances[mesh_id].push_back(std::move(mesh_instance)); return ptr; }

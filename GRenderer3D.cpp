@@ -138,22 +138,6 @@ uint64_t GRenderer3D::CreateMesh(
         return mesh_id;
 }
 
-void GRenderer3D::MeshInstance::RotateXEuler(float degrees) noexcept { float4 new_rot = linalg::qmul(
-                float4{this->rotation[0], this->rotation[1], this->rotation[2], this->rotation[3]},
-                linalg::rotation_quat(float3{1, 0, 0}, (float)(degrees * 3.141592653589793238462643383279502884L/180.0))
-        ); this->rotation[0] = new_rot.x; this->rotation[1] = new_rot.y; this->rotation[2] = new_rot.z; this->rotation[3] = new_rot.w;
-}
-void GRenderer3D::MeshInstance::RotateYEuler(float degrees) noexcept { float4 new_rot = linalg::qmul(
-                float4{this->rotation[0], this->rotation[1], this->rotation[2], this->rotation[3]},
-                linalg::rotation_quat(float3{0, 1, 0}, (float)(degrees * 3.141592653589793238462643383279502884L/180.0L))
-        ); this->rotation[0] = new_rot.x; this->rotation[1] = new_rot.y; this->rotation[2] = new_rot.z; this->rotation[3] = new_rot.w;
-}
-void GRenderer3D::MeshInstance::RotateZEuler(float degrees) noexcept { float4 new_rot = linalg::qmul(
-                float4{this->rotation[0], this->rotation[1], this->rotation[2], this->rotation[3]},
-                linalg::rotation_quat(float3{0, 0, 1}, (float)(degrees * 3.141592653589793238462643383279502884L/180.0L))
-        ); this->rotation[0] = new_rot.x; this->rotation[1] = new_rot.y; this->rotation[2] = new_rot.z; this->rotation[3] = new_rot.w;
-}
-
 int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexcept { glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE); glEnable(GL_DEPTH_TEST);
         glUseProgram(this->_->shader_id); glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, this->_->ssbo_vertex_instance_input_id); glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, this->_->ssbo_fragment_instance_input_id);
 
@@ -212,10 +196,10 @@ int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexce
                         ));
 
                         this->_->instance_colors.push_back({
-                                ((mesh_instance->color_RGBA >> 24) & 0xFF) / 255.0f,
-                                ((mesh_instance->color_RGBA >> 16) & 0xFF) / 255.0f,
-                                ((mesh_instance->color_RGBA >> 8) & 0xFF) / 255.0f,
-                                ((mesh_instance->color_RGBA >> 0) & 0xFF) / 255.0f
+                                ((mesh_instance->color >> 24) & 0xFF) / 255.0f,
+                                ((mesh_instance->color >> 16) & 0xFF) / 255.0f,
+                                ((mesh_instance->color >> 8) & 0xFF) / 255.0f,
+                                ((mesh_instance->color >> 0) & 0xFF) / 255.0f
                         });
                 }
                 glNamedBufferSubData(this->_->ssbo_vertex_instance_input_id, 0, this->_->instance_model_matrices.size()*sizeof(float4x4), this->_->instance_model_matrices.data());

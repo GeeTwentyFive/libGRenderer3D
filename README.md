@@ -25,8 +25,7 @@ Quake/UT/GoldSrc-style renderer but with angle-darkening instead of lighting to 
 
 #### MeshInstance (created with `.AddMesh()`):
 - `.position` - Set/Get position
-- `.rotation` - Set/Get rotation (as Quaternion)
-- `.RotateXEuler()`, `.RotateYEuler()`, `.RotateZEuler()` - Rotate via Euler angles (in degrees)
+- `.rotation` - Set/Get rotation (Quaternion)
 - `.scale` - Set/Get scale
-- `.color_RGBA` - Set/Get color shift (in RGBA; 0xRRGGBBAA)
+- `.color` - Set/Get color shift (in RGBA; 0xRRGGBBAA)
 - `.Remove()` - Remove from existence.
