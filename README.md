@@ -27,5 +27,5 @@ Quake/UT/GoldSrc-style renderer but with angle-darkening instead of lighting to 
 - `.position` - Set/Get position
 - `.rotation` - Set/Get rotation (Quaternion)
 - `.scale` - Set/Get scale
-- `.color` - Set/Get color shift (in RGBA; 0xRRGGBBAA)
+- `.color_RGBA` - Set/Get color shift (in RGBA; 0xRRGGBBAA)
 - `.Remove()` - Remove from existence.

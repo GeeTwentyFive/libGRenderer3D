@@ -196,10 +196,10 @@ int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexce
                         ));
 
                         this->_->instance_colors.push_back({
-                                ((mesh_instance->color >> 24) & 0xFF) / 255.0f,
-                                ((mesh_instance->color >> 16) & 0xFF) / 255.0f,
-                                ((mesh_instance->color >> 8) & 0xFF) / 255.0f,
-                                ((mesh_instance->color >> 0) & 0xFF) / 255.0f
+                                ((mesh_instance->color_RGBA >> 24) & 0xFF) / 255.0f,
+                                ((mesh_instance->color_RGBA >> 16) & 0xFF) / 255.0f,
+                                ((mesh_instance->color_RGBA >> 8) & 0xFF) / 255.0f,
+                                ((mesh_instance->color_RGBA >> 0) & 0xFF) / 255.0f
                         });
                 }
                 glNamedBufferSubData(this->_->ssbo_vertex_instance_input_id, 0, this->_->instance_model_matrices.size()*sizeof(float4x4), this->_->instance_model_matrices.data());
