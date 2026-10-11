@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 #include <linalg/linalg.h>
+#include <memory>
+#include <utility>
 using namespace linalg::aliases;
 
 #include <stdexcept>
@@ -70,8 +72,10 @@ struct Mesh {
 struct GRenderer3D::_impl { uint64_t _last_uid = 0; uint64_t NewUID() { return _last_uid++; }
         GLuint shader_id;
         GLint shader_cameraPos_location; GLint shader_viewProjection_location;
+
         std::unordered_map<uint64_t, Mesh> meshes;
 
+        std::unordered_map<uint64_t, std::vector<std::unique_ptr<GRenderer3D::MeshInstance>>> mesh_instances;
         GLuint ssbo_vertex_instance_input_id; std::vector<float4x4> instance_model_matrices;
         GLuint ssbo_fragment_instance_input_id; std::vector<float4> instance_colors;
 };
@@ -138,6 +142,24 @@ uint64_t GRenderer3D::CreateMesh(
         return mesh_id;
 }
 
+GRenderer3D::MeshInstance* GRenderer3D::AddMesh(const uint64_t mesh_id) noexcept {
+        std::unique_ptr<GRenderer3D::MeshInstance>& mesh_instance = this->_->mesh_instances[mesh_id].emplace_back(std::make_unique<GRenderer3D::MeshInstance>());
+        mesh_instance->_renderer_instance = this;
+        mesh_instance->mesh_id = mesh_id;
+        return mesh_instance.get();
+}
+
+void GRenderer3D::MeshInstance::Remove() noexcept {
+        std::vector<std::unique_ptr<GRenderer3D::MeshInstance>>& mesh_instances = this->_renderer_instance->_->mesh_instances[this->mesh_id];
+        for (size_t i = 0; i < mesh_instances.size(); i++) {
+                if (mesh_instances[i].get() == this) {
+                        mesh_instances[i] = std::move(mesh_instances.back());
+                        break;
+                }
+        }
+        mesh_instances.pop_back();
+}
+
 int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexcept { glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE); glEnable(GL_DEPTH_TEST);
         glUseProgram(this->_->shader_id); glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, this->_->ssbo_vertex_instance_input_id); glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, this->_->ssbo_fragment_instance_input_id);
 
@@ -167,7 +189,7 @@ int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexce
         );
 
         // Draw meshes
-        for (const auto& [mesh_id, _mesh_instances] : mesh_instances) {
+        for (const auto& [mesh_id, _mesh_instances] : this->_->mesh_instances) {
                 glBindVertexArray(this->_->meshes[mesh_id].vao);
                 glBindTextureUnit(0, this->_->meshes[mesh_id].texture_id);
 
