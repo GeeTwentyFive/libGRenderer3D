@@ -1,11 +1,5 @@
 #include <GRenderer3D.hpp>
 
-#include <glad/glad.h>
-#include <linalg/linalg.h>
-#include <memory>
-#include <utility>
-using namespace linalg::aliases;
-
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -15,6 +9,12 @@ using namespace linalg::aliases;
 #ifndef M_PI  // (Windows fix)
 #define M_PI 3.14159265358979323846
 #endif
+#include <memory>
+#include <utility>
+
+#include <glad/glad.h>
+#include <linalg/linalg.h>
+using namespace linalg::aliases;
 
 
 namespace {
