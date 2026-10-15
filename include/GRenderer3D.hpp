@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-class GRenderer3D { public: ~GRenderer3D(); explicit GRenderer3D(); private: struct _impl; std::unique_ptr<_impl> _; public:
+class GRenderer3D { public: ~GRenderer3D(); explicit GRenderer3D(); private: float view[16], projection[16], viewProjection[16]; struct _impl; std::unique_ptr<_impl> _; public: float* View() { return view; } float* Projection() { return projection; } float* ViewProjection() { return viewProjection; }
         float camera_pos[3] = {0, 0, 0};
         uint16_t camera_yaw = 0;  // 0..65535 = 0..2PI
         uint16_t camera_pitch = (UINT16_MAX/2);  // 16384..49152 = PI/2..PI+PI/2  (max. recommended sens. multiplier: 24 (to avoid going beyond 16384 buffer on either side in a single count (for correct clamping)))
@@ -16,7 +16,7 @@ class GRenderer3D { public: ~GRenderer3D(); explicit GRenderer3D(); private: str
                 const uint32_t* indices, const size_t indices_len,
                 const uint32_t* texture_RGBA, const uint16_t texture_width, const uint16_t texture_height
         );
-        struct MeshInstance { void* user_data = nullptr; uint64_t mesh_id; GRenderer3D* _renderer_instance = nullptr;
+        struct MeshInstance { void* user_data = nullptr; uint64_t mesh_id; GRenderer3D* _renderer_instance = nullptr; float _transform[16]; float* Transform() { return _transform; }
                 float position[3] = {0, 0, 0};
                 float rotation[4] = {0, 0, 0, 1};  // Quaternion
                 float scale[3] = {1, 1, 1};

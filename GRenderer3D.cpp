@@ -80,7 +80,7 @@ struct GRenderer3D::_impl { uint64_t _last_uid = 0; uint64_t NewUID() { return _
         GLuint ssbo_fragment_instance_input_id; std::vector<float4> instance_colors;
 };
 
-GRenderer3D::GRenderer3D() { this->_ = std::make_unique<GRenderer3D::_impl>(); GLint status;
+GRenderer3D::GRenderer3D() { this->_ = std::make_unique<GRenderer3D::_impl>(); GLint status; //glEnable(GL_DEBUG_OUTPUT); glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam){ERROR(message);}, nullptr);
         if (!gladLoadGL()) ERROR("Failed to load OpenGL functions");
 
         this->_->shader_id = glCreateProgram(); if (!this->_->shader_id) ERROR("Failed to create shader program");
@@ -102,8 +102,6 @@ GRenderer3D::GRenderer3D() { this->_ = std::make_unique<GRenderer3D::_impl>(); G
         glCreateBuffers(1, &this->_->ssbo_fragment_instance_input_id);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, this->_->ssbo_fragment_instance_input_id);
         glNamedBufferStorage(this->_->ssbo_fragment_instance_input_id, SSBO_FRAGMENT_INSTANCE_INPUT_CAPACITY, NULL, GL_DYNAMIC_STORAGE_BIT);
-
-        //glEnable(GL_DEBUG_OUTPUT); glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam){ERROR(message);}, nullptr);
 }
 
 uint64_t GRenderer3D::CreateMesh(
@@ -170,7 +168,7 @@ int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexce
                 (const GLfloat*)&_camera_pos
         );
         if (camera_pitch < 16385) camera_pitch = 16385; if (camera_pitch > 49151) camera_pitch = 49151;  // 16384..49152 = PI/2..PI+PI/2
-        float4x4 view = linalg::lookat_matrix(
+        *(float4x4*)this->view = linalg::lookat_matrix(
                 _camera_pos,
                 _camera_pos + linalg::qrot(
                         linalg::qmul(
@@ -181,11 +179,11 @@ int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexce
                 ),
                 float3{0, 1, 0}
         );
-        float4x4 proj = linalg::perspective_matrix(camera_fov, ((float)framebuffer_width)/((float)framebuffer_height), camera_near, camera_far, linalg::fwd_axis::neg_z, linalg::z_range::zero_to_one);
-        float4x4 viewProjection = linalg::mul(proj, view);  // NOTE: Flip multiplication order in not-OpenGL
+        *(float4x4*)this->projection = linalg::perspective_matrix(camera_fov, ((float)framebuffer_width)/((float)framebuffer_height), camera_near, camera_far, linalg::fwd_axis::neg_z, linalg::z_range::zero_to_one);
+        *(float4x4*)this->viewProjection = linalg::mul((float4x4)this->projection, (float4x4)this->view);  // NOTE: Flip multiplication order in not-OpenGL
         glUniformMatrix4fv(
                 this->_->shader_viewProjection_location, 1, GL_FALSE,
-                (const GLfloat*)&viewProjection
+                (const GLfloat*)this->viewProjection
         );
 
         // Draw meshes
@@ -195,27 +193,15 @@ int GRenderer3D::DrawFrame(int framebuffer_width, int framebuffer_height) noexce
 
                 this->_->instance_model_matrices.clear(); this->_->instance_model_matrices.reserve(_mesh_instances.size()); if (this->_->instance_model_matrices.capacity() > SSBO_VERTEX_INSTANCE_INPUT_CAPACITY) return __LINE__;
                 this->_->instance_colors.clear(); this->_->instance_colors.reserve(_mesh_instances.size()); if (this->_->instance_colors.capacity() > SSBO_FRAGMENT_INSTANCE_INPUT_CAPACITY) return __LINE__;
-                for (const auto& mesh_instance : _mesh_instances) {
-                        this->_->instance_model_matrices.push_back(linalg::mul(
-                                linalg::translation_matrix(float3{
-                                        mesh_instance->position[0],
-                                        mesh_instance->position[1],
-                                        mesh_instance->position[2]
-                                }),
+                for (const std::unique_ptr<GRenderer3D::MeshInstance>& mesh_instance : _mesh_instances) {
+                        *(float4x4*)mesh_instance->_transform = linalg::mul(
+                                linalg::translation_matrix(float3{mesh_instance->position[0], mesh_instance->position[1], mesh_instance->position[2]}),
                                 linalg::mul(
-                                        linalg::rotation_matrix(float4{
-                                                mesh_instance->rotation[0],
-                                                mesh_instance->rotation[1],
-                                                mesh_instance->rotation[2],
-                                                mesh_instance->rotation[3]
-                                        }),
-                                        linalg::scaling_matrix(float3{
-                                                mesh_instance->scale[0],
-                                                mesh_instance->scale[1],
-                                                mesh_instance->scale[2]
-                                        })
+                                        linalg::rotation_matrix(float4{mesh_instance->rotation[0], mesh_instance->rotation[1], mesh_instance->rotation[2], mesh_instance->rotation[3]}),
+                                        linalg::scaling_matrix(float3{mesh_instance->scale[0], mesh_instance->scale[1], mesh_instance->scale[2]})
                                 )
-                        ));
+                        );
+                        this->_->instance_model_matrices.push_back(*(float4x4*)mesh_instance->_transform);
 
                         this->_->instance_colors.push_back({
                                 ((mesh_instance->color_RGBA >> 24) & 0xFF) / 255.0f,
