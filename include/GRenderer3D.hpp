@@ -4,11 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// GLSL config (must be strings (for GLSL shader source string concat)):
-#ifndef GR3D_MIN_BRIGHTNESS
-#define GR3D_MIN_BRIGHTNESS "0.5"  // must be between 0.0 and 1.0
-#endif
-
 class GRenderer3D { public: ~GRenderer3D(); explicit GRenderer3D(); private: float view[16], projection[16], viewProjection[16]; struct _impl; std::unique_ptr<_impl> _; public: float* View() { return view; } float* Projection() { return projection; } float* ViewProjection() { return viewProjection; }
         float camera_pos[3] = {0, 0, 0};
         uint16_t camera_yaw = 0;  // 0..65535 = 0..2PI

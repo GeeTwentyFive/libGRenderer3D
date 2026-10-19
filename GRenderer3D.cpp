@@ -61,7 +61,7 @@ const GLchar* FRAGMENT_SHADER = {"#version 460 core\n"
         "void main() {"
                 "const vec4 unlit_color = texture(texture0, frag_uv) * instanceColors[frag_InstanceID];"
                 "const float ndotv = dot(frag_normal, normalize(cameraPos - frag_worldPos));"
-                "FragColor = unlit_color * (abs(ndotv) * (1.0 - (" GR3D_MIN_BRIGHTNESS ")) + (" GR3D_MIN_BRIGHTNESS "));"
+                "FragColor = unlit_color * (abs(ndotv)*0.5 + 0.5);"  // (maps 0.0<->1.0 to 0.5<->1.0 (otherwise too dark))
         "}"
 ""};
 }
