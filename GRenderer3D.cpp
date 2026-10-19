@@ -36,17 +36,17 @@ const GLchar* VERTEX_SHADER = {"#version 460 core\n"
                 "mat4 modelMatrices[];"
         "};"
 
-        "out vec4 frag_worldPos;"
+        "out vec3 frag_worldPos;"
         "out vec3 frag_normal;"
         "out vec2 frag_uv;"
         "flat out int frag_InstanceID;"
 
-        "void main() {" "frag_worldPos = modelMatrices[gl_InstanceID] * vec4(pos, 1.0f);" "frag_normal = normalize(mat3(transpose(inverse(modelMatrices[gl_InstanceID]))) * normal);" "frag_uv = uv;" "frag_InstanceID = gl_InstanceID;"
+        "void main() {" "frag_worldPos = (modelMatrices[gl_InstanceID] * vec4(pos, 1.0f)).xyz;" "frag_normal = normalize(mat3(transpose(inverse(modelMatrices[gl_InstanceID]))) * normal);" "frag_uv = uv;" "frag_InstanceID = gl_InstanceID;"
                 "gl_Position = viewProjection * modelMatrices[gl_InstanceID] * vec4(pos, 1.0f);"
         "}"
 ""};
 const GLchar* FRAGMENT_SHADER = {"#version 460 core\n"
-        "in vec4 frag_worldPos;"
+        "in vec3 frag_worldPos;"
         "in vec3 frag_normal;"
         "in vec2 frag_uv;"
         "flat in int frag_InstanceID;"
@@ -59,7 +59,9 @@ const GLchar* FRAGMENT_SHADER = {"#version 460 core\n"
         "out vec4 FragColor;"
 
         "void main() {"
-                "FragColor = (texture(texture0, frag_uv) * instanceColors[frag_InstanceID]) * max(dot(frag_normal, normalize(cameraPos - frag_worldPos.xyz)), 0.1);"
+                "const vec4 unlit_color = texture(texture0, frag_uv) * instanceColors[frag_InstanceID];"
+                "const float ndotv = dot(frag_normal, normalize(cameraPos - frag_worldPos));"
+                "FragColor = unlit_color * (abs(ndotv) * (1.0 - (" GR3D_MIN_BRIGHTNESS ")) + (" GR3D_MIN_BRIGHTNESS "));"
         "}"
 ""};
 }

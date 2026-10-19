@@ -47,13 +47,12 @@ int main() { try {
         GRenderer3D::MeshInstance* cube_mesh_instance_1 = gr3d.AddMesh(cube_mesh_id);
         cube_mesh_instance_1->scale[0] = 32.0f; cube_mesh_instance_1->scale[2] = 32.0f;
         cube_mesh_instance_1->position[1] = -2.0f;
+
         GRenderer3D::MeshInstance* cube_mesh_instance_2 = gr3d.AddMesh(cube_mesh_id);
-        {
-                float4 new_rot = linalg::qmul(
-                        float4{cube_mesh_instance_2->rotation[0], cube_mesh_instance_2->rotation[1], cube_mesh_instance_2->rotation[2], cube_mesh_instance_2->rotation[3]},
-                        linalg::rotation_quat(float3{0, 0, 1}, (float)(M_PI/4.0))
-                ); cube_mesh_instance_2->rotation[0] = new_rot.x; cube_mesh_instance_2->rotation[1] = new_rot.y; cube_mesh_instance_2->rotation[2] = new_rot.z; cube_mesh_instance_2->rotation[3] = new_rot.w;
-        }
+        *(float4*)cube_mesh_instance_2->rotation = linalg::qmul(
+                *(float4*)cube_mesh_instance_2->rotation,
+                linalg::rotation_quat(float3{0, 0, 1}, (float)(M_PI/4.0))
+        );
 
         glClearColor(0.0, 0.0, 0.0, 1.0);
         GFramePacer gfp; gfp.target_frametime_ms = TARGET_FRAMETIME_MS;
