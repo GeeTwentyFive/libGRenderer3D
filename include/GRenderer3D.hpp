@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _LIBGRENDERER3D_H
+#define _LIBGRENDERER3D_H
 
 #include <memory>
 #include <stddef.h>
@@ -27,3 +28,5 @@ class GRenderer3D { public: ~GRenderer3D(); explicit GRenderer3D(); private: flo
 
         int DrawFrame(int framebuffer_width, int framebuffer_height) noexcept;  // returns non-0 on error
 };
+
+#endif // _LIBGRENDERER3D_H
